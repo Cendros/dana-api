@@ -1,34 +1,39 @@
-import { InferSelectModel } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { InferSelectModel, SQL } from "drizzle-orm";
+import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const check = sqliteTable("check", {
-    userId: integer('userId').notNull().references(() => user.id),
-    structureId: integer('userId').notNull().references(() => structure.id),
-    quantity: integer('quantity').notNull()
+export const checkTable = sqliteTable("check", {
+    userId: integer('user_id').notNull().references(() => userTable.id),
+    structureId: integer('structure_id').notNull().references(() => structureTable.id),
+    quantity: integer('quantity').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey(table.userId, table.structureId)
+    }
 })
 
-export const user = sqliteTable("user", {
-    id: integer('id', {mode: "number"}).primaryKey({ autoIncrement: true }),
+export const userTable = sqliteTable("user", {
+    id: integer('id', { mode: "number" }).primaryKey({ autoIncrement: true }),
     email: text('email').notNull().unique(),
     password: text('password').notNull(),
-    societyId: integer('societyId').notNull().references(() => society.id),
+    societyId: integer('society_id').notNull().references(() => societyTable.id),
     type: text('type', {enum: ['employee', 'structure', 'society']}).notNull()
 })
 
-export const structure = sqliteTable("structure", {
-    id: integer('id', {mode: "number"}).primaryKey({ autoIncrement: true }),
+export const structureTable = sqliteTable("structure", {
+    id: integer('id', { mode: "number" }).primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
     address: text('address'),
     city: text('city'),
     postalCode: text('postalCode'),
+    checkValue: integer('check_value')
 })
 
-export const society = sqliteTable("society", {
+export const societyTable = sqliteTable("society", {
     id: integer('id', {mode: "number"}).primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
 })
 
-export type Check = InferSelectModel<typeof check>;
-export type Structure = InferSelectModel<typeof structure>;
-export type Society = InferSelectModel<typeof society>;
-export type User = InferSelectModel<typeof user>;
+export type Check = InferSelectModel<typeof checkTable>;
+export type Structure = InferSelectModel<typeof structureTable>;
+export type Society = InferSelectModel<typeof societyTable>;
+export type User = InferSelectModel<typeof userTable>;

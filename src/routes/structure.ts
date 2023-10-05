@@ -1,5 +1,6 @@
 import Elysia, { t } from "elysia";
-import { deleteStructure, getStructures, newStructure } from "../services/structure";
+import { deleteStructure, getStructures, newStructure, setCheckValue } from "../services/structure";
+import { deleteCheckValue } from "../services/check";
 
 export const structureController = new Elysia({ prefix: '/structure',  }) 
     .get('/', async () => {
@@ -12,7 +13,9 @@ export const structureController = new Elysia({ prefix: '/structure',  })
 
     .post('/new', async ({ body }) => {
 
-        await newStructure(body.name, body.address, body.city, body.postalCode);
+        const id = await newStructure(body.name, body.address, body.city, body.postalCode);
+        console.log(id);
+        
 
         return { created: true }
     }, {
@@ -30,7 +33,24 @@ export const structureController = new Elysia({ prefix: '/structure',  })
         }
     })
 
-    .delete('/:id', async ({ params: {id} }) => {
+    .put('/value', async ({ body }) => {
+        await setCheckValue(body.structureId, body.value);
+        return { modified: true };
+    }, {
+        body: t.Object(
+            {
+                structureId: t.Integer(),
+                value: t.Integer(),
+            },
+        ),
+        detail: {
+            summary: "Change the value for the checks of a structure",
+            tags: ['Structure']
+        }
+    })
+
+    .delete('/:id', async ({ params: { id } }) => {
+        await deleteCheckValue(Number.parseInt(id))
         const deleted = await deleteStructure(Number.parseInt(id));
         return { deleted: deleted };
     }, { detail: {

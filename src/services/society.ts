@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db"
-import { society as societyTable } from "../db/schema"
+import { societyTable } from "../db/schema"
 
 export const getSocieties = async () => {
     const societies = await db.select().from(societyTable).all();
@@ -8,7 +8,7 @@ export const getSocieties = async () => {
 }
 
 export const getSocietyById = async (id: number) => {
-    const society = await db.query.society.findFirst({
+    const society = await db.query.societyTable.findFirst({
         where: eq(societyTable.id, id)
     })
     return society;
