@@ -12,6 +12,7 @@ export const getCheckFromUser = async (userId: number) => {
         .select({
             structureId: checkTable.structureId,
             structureName: structureTable.name,
+            image: structureTable.image,
             quantity: checkTable.quantity,
             value: structureTable.checkValue
         })

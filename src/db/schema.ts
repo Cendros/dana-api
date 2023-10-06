@@ -25,7 +25,8 @@ export const structureTable = sqliteTable("structure", {
     address: text('address'),
     city: text('city'),
     postalCode: text('postalCode'),
-    checkValue: integer('check_value')
+    checkValue: integer('check_value'),
+    image: text('image')
 })
 
 export const societyTable = sqliteTable("society", {

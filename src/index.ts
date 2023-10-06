@@ -4,8 +4,13 @@ import swagger from "./consts/swagger.config";
 import { societyController } from "./routes/society";
 import { structureController } from "./routes/structure";
 import { userController } from "./routes/user";
+import cors from "@elysiajs/cors";
+import staticPlugin from "@elysiajs/static";
 
 const app = new Elysia()
+    .use(cors())
+    .use(staticPlugin())
+    
     .onError(({ code, error, set }) => {
         console.log(code);
         set.status = 400;

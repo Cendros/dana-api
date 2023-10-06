@@ -1,5 +1,5 @@
 import Elysia, { t } from "elysia";
-import { getChecks, refillCheckToUser, useCheck } from "../services/check";
+import { getCheckFromUser, getChecks, refillCheckToUser, useCheck } from "../services/check";
 
 export const checkController = new Elysia({ prefix: '/check' })
     .get('/', async () => {
@@ -7,6 +7,14 @@ export const checkController = new Elysia({ prefix: '/check' })
         return { checks: checks };
     }, { detail: {
         summary: "Get all checks",
+        tags: ['Check']
+    }})
+
+    .get('/:id', async ({ params: {id} }) => {
+        const checks = await getCheckFromUser(Number.parseInt(id));
+        return { checks: checks };
+    }, { detail: {
+        summary: 'get checks of user',
         tags: ['Check']
     }})
 
