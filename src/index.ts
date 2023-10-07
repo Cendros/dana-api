@@ -6,6 +6,7 @@ import { structureController } from "./routes/structure";
 import { userController } from "./routes/user";
 import cors from "@elysiajs/cors";
 import staticPlugin from "@elysiajs/static";
+import { authController } from "./routes/auth";
 
 const app = new Elysia()
     .use(cors())
@@ -19,11 +20,12 @@ const app = new Elysia()
 
     .use(swagger)
 
+    .use(authController)
     .use(checkController)
     .use(societyController)
     .use(structureController)
     .use(userController)
     
-    .listen(3000);
+    .listen(3000)
 
 export default app;

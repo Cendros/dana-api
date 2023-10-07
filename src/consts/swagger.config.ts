@@ -7,7 +7,7 @@ export default swagger({
             version: '1.0.0'
         },
         tags: [
-            { name: 'DEV', description: "Testing endpoints" },
+            { name: 'Auth', description: "Authentification endpoints" },
             { name: 'Check', description: "checks endpoints" },
             { name: 'Structure', description: "structures endpoints" },
             { name: 'User', description: "users endpoints" },

@@ -16,7 +16,7 @@ export const registerUser = async (email: string, password: string, societyId: n
     await db.insert(userTable).values({
         email: email,
         password: password,
-        societyId: 1,
+        societyId: societyId,
         type: type
     });
 }
