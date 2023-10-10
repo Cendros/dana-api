@@ -9,6 +9,7 @@
     "db-studio": "bunx drizzle-kit studio"
   },
   "dependencies": {
+    "@elysiajs/bearer": "^0.7.0",
     "@elysiajs/cors": "^0.7.1",
     "@elysiajs/jwt": "^0.7.0",
     "@elysiajs/static": "^0.7.1",

@@ -6,17 +6,15 @@ export const structureController = new Elysia({ prefix: '/structure',  })
     .get('/', async () => {
         const structures = await getStructures();
         return {structures: structures};
-    }, { detail: {
-        summary: 'get all structures',
-        tags: ['Structure']
-    }})
+    }, { 
+        detail: {
+            summary: 'get all structures',
+            tags: ['Structure']
+        }
+    })
 
     .post('/new', async ({ body }) => {
-
-        const id = await newStructure(body.name, body.address, body.city, body.postalCode);
-        console.log(id);
-        
-
+        await newStructure(body.name, body.address, body.city, body.postalCode);
         return { created: true }
     }, {
         body: t.Object(
@@ -53,7 +51,9 @@ export const structureController = new Elysia({ prefix: '/structure',  })
         await deleteCheckValue(Number.parseInt(id))
         const deleted = await deleteStructure(Number.parseInt(id));
         return { deleted: deleted };
-    }, { detail: {
-        summary: 'delete structure by id',
-        tags: ['Structure']
-    }})
+    }, {
+        detail: {
+            summary: 'delete structure by id',
+            tags: ['Structure']
+        }
+    })

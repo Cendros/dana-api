@@ -1,4 +1,4 @@
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import { checkController } from "./routes/check";
 import swagger from "./consts/swagger.config";
 import { societyController } from "./routes/society";
@@ -7,11 +7,12 @@ import { userController } from "./routes/user";
 import cors from "@elysiajs/cors";
 import staticPlugin from "@elysiajs/static";
 import { authController } from "./routes/auth";
+import jwt from "@elysiajs/jwt";
 
 const app = new Elysia()
     .use(cors())
     .use(staticPlugin())
-    
+
     .onError(({ code, error, set }) => {
         console.log(code);
         set.status = 400;

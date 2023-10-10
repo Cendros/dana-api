@@ -10,5 +10,5 @@ export const verifyCredentials = async (email: string, password: string) => {
         return false;
         
     const valid = await Bun.password.verify(password, user!.password);
-    return valid ? { id: String(user.id), type: String(user.type)} : false;
+    return valid ? { id: String(user.id), type: String(user.type), societyId: String(user.societyId)} : false;
 }

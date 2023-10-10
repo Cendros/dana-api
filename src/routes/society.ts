@@ -6,22 +6,12 @@ export const societyController = new Elysia({ prefix: '/society',  })
         const societies = await getSocieties();
         return {societies: societies};
     }, { detail: {
-        summary: 'get all societies',
-        tags: ['Society']
-    }})
-
-    .get('/:id', async ({ params: {id} }) => {
-        const society = await getSocietyById(Number.parseInt(id));
-        return { society: society };
-    }, { detail: {
-        summary: 'get a society by id',
-        tags: ['Society']
+        summary: 'Get all societies',
+        tags: ['DEV']
     }})
 
     .post('/new', async ({ body }) => {
-
         await newSociety(body.name);
-
         return { created: true }
     }, {
         body: t.Object(

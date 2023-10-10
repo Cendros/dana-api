@@ -1,5 +1,6 @@
 import { InferSelectModel, SQL } from "drizzle-orm";
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { userTypes } from "../types/user";
 
 export const checkTable = sqliteTable("check", {
     userId: integer('user_id').notNull().references(() => userTable.id),
@@ -16,7 +17,7 @@ export const userTable = sqliteTable("user", {
     email: text('email').notNull().unique(),
     password: text('password').notNull(),
     societyId: integer('society_id').notNull().references(() => societyTable.id),
-    type: text('type', {enum: ['employee', 'structure', 'society']}).notNull()
+    type: text('type', {enum: userTypes}).notNull()
 })
 
 export const structureTable = sqliteTable("structure", {

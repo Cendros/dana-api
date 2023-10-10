@@ -1,25 +1,56 @@
 import Elysia, { t } from "elysia";
 import { getCheckFromUser, getChecks, refillCheckToUser, useCheck } from "../services/check";
+import jwt from "@elysiajs/jwt";
+import { getSocietyIdById } from "../services/user";
+import bearer from "@elysiajs/bearer";
 
 export const checkController = new Elysia({ prefix: '/check' })
+    .use(jwt({
+        name: 'jwt',
+        secret: process.env.JWT_SECRET!
+    }))
+    .use(bearer())
+
     .get('/', async () => {
         const checks = await getChecks();
         return { checks: checks };
     }, { detail: {
         summary: "Get all checks",
-        tags: ['Check']
+        tags: ['DEV']
     }})
 
-    .get('/:id', async ({ params: {id} }) => {
-        const checks = await getCheckFromUser(Number.parseInt(id));
+    .get('/self', async ({ set, jwt, bearer }) => {   
+        const tokenData = await jwt.verify(bearer);
+        if (!tokenData) {
+            set.status = 401;
+            return 'Unauthorized';
+        }
+
+        const checks = await getCheckFromUser(Number.parseInt(tokenData.id));
         return { checks: checks };
-    }, { detail: {
-        summary: 'get checks of user',
-        tags: ['Check']
-    }})
+    }, {
+        detail: {
+            summary: 'get checks of user',
+            tags: ['Check']
+        }
+    })
 
-    .post('/refill', async ({ body }) => {
-        await refillCheckToUser(body.userId, body.structureId, body.quantity);
+    .post('/refill', async ({ set, jwt, bearer, body: {userId, structureId, quantity} }) => {
+        const tokenData = await jwt.verify(bearer);
+        console.log(tokenData);
+        
+        if (!tokenData || tokenData.type !== 'society') {
+            set.status = 401;
+            return 'Unauthorized';
+        }
+
+        const societyId = await getSocietyIdById(userId);
+        if (Number.parseInt(tokenData.societyId) !== societyId) {
+            set.status = 401;
+            return 'Unauthorized';
+        }
+
+        await refillCheckToUser(userId, structureId, quantity);
         return { refilled: true };
     }, {
         body: t.Object(
@@ -35,8 +66,15 @@ export const checkController = new Elysia({ prefix: '/check' })
         }
     })
 
-    .put('/use', async ({ body }) => {
-        const used = await useCheck(body.userId, body.structureId);
+    .put('/use', async ({ set, jwt, bearer, body: { userId, structureId } }) => {
+        const tokenData = await jwt.verify(bearer);
+        
+        if (!tokenData || tokenData.type !== 'machine' && tokenData.type !== 'structure') {
+            set.status = 401;
+            return 'Unauthorized';
+        }
+
+        const used = await useCheck(userId, structureId);
         return { used: used };
     }, {
         body: t.Object(
