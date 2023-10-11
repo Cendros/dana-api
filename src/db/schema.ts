@@ -17,7 +17,8 @@ export const userTable = sqliteTable("user", {
     email: text('email').notNull().unique(),
     password: text('password').notNull(),
     societyId: integer('society_id').notNull().references(() => societyTable.id),
-    type: text('type', {enum: userTypes}).notNull()
+    type: text('type', {enum: userTypes}).notNull(),
+    code128: text('code_128').unique()
 })
 
 export const structureTable = sqliteTable("structure", {

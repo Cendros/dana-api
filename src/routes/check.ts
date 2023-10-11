@@ -21,6 +21,7 @@ export const checkController = new Elysia({ prefix: '/check' })
 
     .get('/self', async ({ set, jwt, bearer }) => {   
         const tokenData = await jwt.verify(bearer);
+        
         if (!tokenData) {
             set.status = 401;
             return 'Unauthorized';
