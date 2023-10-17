@@ -1,5 +1,6 @@
 import { InferSelectModel } from "drizzle-orm";
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { accessibilitiesType } from "../types/accessibility";
 
 export const eventTable = sqliteTable('event', {
     id: integer('id').primaryKey({ autoIncrement: true }),
@@ -45,10 +46,7 @@ export const societyUserTable = sqliteTable("society_user", {
     id: integer('id').primaryKey({ autoIncrement: true }),
     email: text('email').notNull().unique(),
     password: text('password').notNull(),
-    societyId: integer('society_id').references(() => societyTable.id, { onDelete: 'cascade' }),
-    maritalStatus: integer('marital_status', { mode: 'boolean' }),
-    children: integer('children'),
-    startDate: integer('start_date', { mode: 'timestamp' }),
+    societyId: integer('society_id').references(() => societyTable.id, { onDelete: 'cascade' }),  
 })
 
 export const structureUserTable = sqliteTable("stucture_user", {
@@ -64,15 +62,32 @@ export const structureTable = sqliteTable("structure", {
     address: text('address'),
     city: text('city'),
     postalCode: text('postalCode'),
-    checkValue: integer('check_value'),
     image: text('image')
 })
 
 export const societyTable = sqliteTable("society", {
     id: integer('id', {mode: "number"}).primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
+    address: text('address'),
+    city: text('city'),
+    postalCode: text('postalCode'),
+})
+export const accessibilityTable = sqliteTable("accessibility", {
+    id: integer('id', {mode: "number"}).primaryKey({ autoIncrement: true }),
+    name: text('name').notNull(),
+    icon: text('icon'),
+    type: text('type',{enum:accessibilitiesType}),
 })
 
+export const accessibilityStuctureTable = sqliteTable('accessibility_structure', {
+    accessibilityId: integer('accessibility_id').notNull().references(() => accessibilityTable.id, { onDelete: 'cascade' }),
+    structureId: integer('structure_id').notNull().references(() => structureTable.id, { onDelete: 'cascade' }),
+   
+}, (table) => {
+    return {
+        pk: primaryKey(table.accessibilityId, table.structureId)
+    }
+})
 export type Event = InferSelectModel<typeof eventTable>;
 export type CheckEvent = InferSelectModel<typeof checkSocietyTable>;
 export type CheckUser = InferSelectModel<typeof checkUserTable>;
@@ -81,3 +96,4 @@ export type SocietyUser = InferSelectModel<typeof societyUserTable>;
 export type StructureUser = InferSelectModel<typeof structureUserTable>;
 export type Structure = InferSelectModel<typeof structureTable>;
 export type Society = InferSelectModel<typeof societyTable>;
+export type Accessibility = InferSelectModel<typeof accessibilityTable >

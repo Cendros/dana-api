@@ -1,5 +1,5 @@
 import Elysia, { t } from "elysia";
-import { getStructures, newStructure } from "../services/structure";
+import { getStructures, newAccessibility, newStructure } from "../services/structure";
 
 export const structureController = new Elysia({ prefix: '/structure',  }) 
     .get('/', async () => {
@@ -26,6 +26,21 @@ export const structureController = new Elysia({ prefix: '/structure',  })
         ),
         detail: {
             summary: 'Create a new structure',
+            tags: ['Structure']
+        }
+    })
+    .post('/newAccessibility', async ({ body }) => {
+        await newAccessibility(body.accessibilityId,body.structureId);
+        return { created: true }
+    }, {
+        body: t.Object(
+            {
+                structureId: t.Integer(),
+                accessibilityId: t.Integer(),
+            },
+        ),
+        detail: {
+            summary: 'Associate a new accessiblity',
             tags: ['Structure']
         }
     })

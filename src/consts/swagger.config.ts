@@ -12,6 +12,7 @@ export default swagger({
             { name: 'Structure', description: "structures endpoints" },
             { name: 'User', description: "users endpoints" },
             { name: 'Society', description: "society endpoints" },
+            { name: 'Accessibility', description: "Accessibility endpoints" },
             { name: 'DEV', description: "Developement endpoints" },
         ],
         components: {

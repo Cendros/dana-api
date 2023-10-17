@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db"
-import { structureTable } from "../db/schema"
+import { accessibilityStuctureTable, structureTable } from "../db/schema"
 
 export const getStructures = async () => {
     const structures = await db.select().from(structureTable).all();
@@ -23,4 +23,11 @@ export const newStructure = async (name: string, address: string, city: string, 
             postalCode: postalCode
         })
         .returning();
+}
+export const newAccessibility = async( accessibilityId: number,structureId:number)=>{
+    await db.insert(accessibilityStuctureTable)
+        .values({
+            structureId: structureId,
+            accessibilityId : accessibilityId
+        })
 }

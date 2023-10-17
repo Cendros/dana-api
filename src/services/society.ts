@@ -14,9 +14,12 @@ export const getSocietyById = async (id: number) => {
     return society;
 }
 
-export const newSociety = async (name: string) => {
+export const newSociety = async (name: string, address:string,city:string, postalCode:string) => {
     await db.insert(societyTable).values({
-        name: name
+        name: name,
+        city: city,
+        postalCode: postalCode,
+        address: address,
     });
 }
 

@@ -11,12 +11,15 @@ export const societyController = new Elysia({ prefix: '/society',  })
     }})
 
     .post('/new', async ({ body }) => {
-        await newSociety(body.name);
+        await newSociety(body.name,body.address,body.city,body.postalCode);
         return { created: true }
     }, {
         body: t.Object(
             {
-                name: t.String()
+                name: t.String(),
+                address: t.String(),
+                city: t.String(),
+                postalCode: t.String()
             },
         ),
         detail: {

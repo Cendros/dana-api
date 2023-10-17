@@ -8,6 +8,7 @@ import cors from "@elysiajs/cors";
 import staticPlugin from "@elysiajs/static";
 import { authController } from "./routes/auth";
 import jwt from "@elysiajs/jwt";
+import { accessibilityController } from "./routes/accessibility";
 
 const app = new Elysia()
     .use(cors())
@@ -26,7 +27,8 @@ const app = new Elysia()
     .use(societyController)
     .use(structureController)
     .use(userController)
+    .use(accessibilityController)
     
-    .listen(3000)
+    .listen(4000)
 
 export default app;
