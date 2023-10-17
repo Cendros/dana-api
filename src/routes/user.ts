@@ -1,7 +1,5 @@
-import Elysia, { t } from "elysia";
-import { deleteUser, generateNewCode128, getCode128, getUserById, getUsers, registerUser } from "../services/user";
-import { getSocietyById } from "../services/society";
-import { userTypes, UserTypes } from "../types/user";
+import Elysia from "elysia";
+import { deleteUser, generateNewCode128, getCode128, getUserById, getUsers } from "../services/user";
 import jwt from "@elysiajs/jwt";
 import bearer from "@elysiajs/bearer";
 
@@ -27,36 +25,6 @@ export const userController = new Elysia({ prefix: '/user',  })
         summary: 'get a user by id',
         tags: ['User']
     }})
-
-    .post('/register', async ({ set, body: {email, password, societyId, type} }) => {
-        if (!userTypes.find((valid) => valid === type)) {
-            set.status = 400;
-            return 'Bas request';
-        }
-        const society = await getSocietyById(societyId);
-        
-        if (!society)
-            throw new Error("Society not found");
-        
-        const hash = await Bun.password.hash(password);
-        
-        await registerUser(email, hash, societyId, (type as UserTypes));
-
-        return { registered: true }
-    }, {
-        body: t.Object(
-            {
-                email: t.String(),
-                password: t.String(),
-                societyId: t.Integer(),
-                type: t.String()
-            },
-        ),
-        detail: {
-            summary: 'Register a new user',
-            tags: ['User']
-        }
-    })
 
     .delete('/:id', async ({ params: {id} }) => {
         const deleted = await deleteUser(Number.parseInt(id));

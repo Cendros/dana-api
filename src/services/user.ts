@@ -24,15 +24,6 @@ export const getSocietyIdById = async (id: number) => {
     return user?.societyId;
 }
 
-export const registerUser = async (email: string, password: string, societyId: number, type: UserTypes) => {
-    await db.insert(userTable).values({
-        email: email,
-        password: password,
-        societyId: societyId,
-        type: type
-    });
-}
-
 export const getCode128 = async (id: number) => {
     const code = await db.query.userTable.findFirst({
         columns: {

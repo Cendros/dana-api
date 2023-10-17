@@ -1,6 +1,6 @@
 import { and, desc, eq, gt, isNotNull, sql } from "drizzle-orm";
 import { db } from "../db"
-import { checkTable, structureTable } from "../db/schema"
+import { checkTable, structureTable, userTable } from "../db/schema"
 
 export const getChecks = async () => {
     const checks = await db.select().from(checkTable).all();
@@ -32,10 +32,17 @@ export const refillCheckToUser = async (userId: number, structureId: number, qua
         })
 }
 
-export const useCheck = async (userId: number, structureId: number) => {
+export const useCheck = async (code: string, structureId: number) => {
+    const user = await db.query.userTable.findFirst({
+        where: eq(userTable.code128, code)
+    });
+
+    if (!user)
+        return false;
+
     const updated = await db.update(checkTable)
         .set({ quantity: sql`${checkTable.quantity} - 1` })
-        .where(and(gt(checkTable.quantity, 0), eq(checkTable.userId, userId), eq(checkTable.structureId, structureId)))
+        .where(and(gt(checkTable.quantity, 0), eq(checkTable.userId, user.id), eq(checkTable.structureId, structureId)))
         .returning({ updated: checkTable.userId })
     return !!updated.length;
 }

@@ -13,6 +13,18 @@ export default swagger({
             { name: 'User', description: "users endpoints" },
             { name: 'Society', description: "society endpoints" },
             { name: 'DEV', description: "Developement endpoints" },
+        ],
+        components: {
+            securitySchemes: {
+                bearer: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                }
+            }
+        },
+        security: [
+            { bearer: [] }
         ]
     }
 })

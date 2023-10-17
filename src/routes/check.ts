@@ -19,7 +19,7 @@ export const checkController = new Elysia({ prefix: '/check' })
         tags: ['DEV']
     }})
 
-    .get('/self', async ({ set, jwt, bearer }) => {   
+    .get('/self', async ({ set, jwt, bearer }) => {
         const tokenData = await jwt.verify(bearer);
         
         if (!tokenData) {
@@ -38,7 +38,6 @@ export const checkController = new Elysia({ prefix: '/check' })
 
     .post('/refill', async ({ set, jwt, bearer, body: {userId, structureId, quantity} }) => {
         const tokenData = await jwt.verify(bearer);
-        console.log(tokenData);
         
         if (!tokenData || tokenData.type !== 'society') {
             set.status = 401;
@@ -67,25 +66,24 @@ export const checkController = new Elysia({ prefix: '/check' })
         }
     })
 
-    .put('/use', async ({ set, jwt, bearer, body: { userId, structureId } }) => {
+    .put('/use', async ({ set, jwt, bearer, body: { code } }) => {
         const tokenData = await jwt.verify(bearer);
         
-        if (!tokenData || tokenData.type !== 'machine' && tokenData.type !== 'structure') {
+        if (!tokenData || tokenData.type !== 'machine' && tokenData.type !== 'structure' || !tokenData.structureId) {
             set.status = 401;
             return 'Unauthorized';
         }
 
-        const used = await useCheck(userId, structureId);
+        const used = await useCheck(code, Number(tokenData.structureId));
         return { used: used };
     }, {
         body: t.Object(
             {
-                userId: t.Integer(),
-                structureId: t.Integer(),
+                code: t.String()
             },
         ),
         detail: {
             summary: "Use a check for a user",
-            tags: ['Check']
+            tags: ['Check'],
         }
     })
