@@ -1,5 +1,5 @@
 import Elysia, { t } from "elysia";
-import { getCheckFromUser, getChecks, refillCheckToUser, useCheck } from "../services/check";
+import { getCheckFromUser, refillCheckToUser, useCheck } from "../services/check";
 import jwt from "@elysiajs/jwt";
 import { getSocietyIdById } from "../services/user";
 import bearer from "@elysiajs/bearer";
@@ -10,14 +10,6 @@ export const checkController = new Elysia({ prefix: '/check' })
         secret: process.env.JWT_SECRET!
     }))
     .use(bearer())
-
-    .get('/', async () => {
-        const checks = await getChecks();
-        return { checks: checks };
-    }, { detail: {
-        summary: "Get all checks",
-        tags: ['DEV']
-    }})
 
     .get('/self', async ({ set, jwt, bearer }) => {
         const tokenData = await jwt.verify(bearer);

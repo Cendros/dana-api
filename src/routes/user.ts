@@ -1,5 +1,5 @@
 import Elysia from "elysia";
-import { deleteUser, generateNewCode128, getCode128, getUserById, getUsers } from "../services/user";
+import { deleteUser, getUserById, getUsers } from "../services/user";
 import jwt from "@elysiajs/jwt";
 import bearer from "@elysiajs/bearer";
 
@@ -32,32 +32,6 @@ export const userController = new Elysia({ prefix: '/user',  })
     }, { 
         detail: {
             summary: 'delete user by id',
-            tags: ['User']
-        }
-    })
-
-    .get('/code128', async ({ set, jwt, bearer }) => {
-        const tokenData = await jwt.verify(bearer);
-        
-        if (!tokenData) {
-            set.status = 401;
-            return 'Unauthorized';
-        }
-
-        let code = await getCode128(Number.parseInt(tokenData.id));
-        if (code)
-            return { code: code };
-
-        code = await generateNewCode128(Number.parseInt(tokenData.id));
-        if (!code) {
-            set.status = 500;
-            return 'Internal server error';
-        }
-
-        return { code: code };
-    }, {
-        detail: {
-            summary: 'Get the code 128',
             tags: ['User']
         }
     })

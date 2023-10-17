@@ -1,6 +1,5 @@
 import Elysia, { t } from "elysia";
-import { deleteStructure, getStructures, newStructure, setCheckValue } from "../services/structure";
-import { deleteCheckValue } from "../services/check";
+import { getStructures, newStructure } from "../services/structure";
 
 export const structureController = new Elysia({ prefix: '/structure',  }) 
     .get('/', async () => {
@@ -27,33 +26,6 @@ export const structureController = new Elysia({ prefix: '/structure',  })
         ),
         detail: {
             summary: 'Create a new structure',
-            tags: ['Structure']
-        }
-    })
-
-    .put('/value', async ({ body }) => {
-        await setCheckValue(body.structureId, body.value);
-        return { modified: true };
-    }, {
-        body: t.Object(
-            {
-                structureId: t.Integer(),
-                value: t.Integer(),
-            },
-        ),
-        detail: {
-            summary: "Change the value for the checks of a structure",
-            tags: ['Structure']
-        }
-    })
-
-    .delete('/:id', async ({ params: { id } }) => {
-        await deleteCheckValue(Number.parseInt(id))
-        const deleted = await deleteStructure(Number.parseInt(id));
-        return { deleted: deleted };
-    }, {
-        detail: {
-            summary: 'delete structure by id',
             tags: ['Structure']
         }
     })
