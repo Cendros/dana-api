@@ -1,14 +1,23 @@
 import Elysia, { t } from "elysia";
-import { getStructures, newAccessibility, newStructure } from "../services/structure";
+import jwt from "@elysiajs/jwt";
+import bearer from "@elysiajs/bearer";
+import { UserTypes } from "../../consts/userTypes";
+import { newAccessibility, newStructure } from "../../services/structure";
 
-export const structureController = new Elysia({ prefix: '/structure',  }) 
-    .get('/', async () => {
-        const structures = await getStructures();
-        return {structures: structures};
-    }, { 
-        detail: {
-            summary: 'get all structures',
-            tags: ['Structure']
+
+export const structureController = new Elysia({ prefix: '/app' })
+    .use(jwt({
+        name: 'jwt',
+        secret: process.env.JWT_SECRET!
+    }))
+    .use(bearer())
+
+    .onBeforeHandle(async ({ set, jwt, bearer }) => {
+        const tokenData = await jwt.verify(bearer);
+        
+        if (!tokenData || tokenData.role !== UserTypes.Structure.toString()) {
+            set.status = 401;
+            return 'Unauthorized';
         }
     })
 
@@ -29,14 +38,15 @@ export const structureController = new Elysia({ prefix: '/structure',  })
             tags: ['Structure']
         }
     })
+
     .post('/newAccessibility', async ({ body }) => {
-        await newAccessibility(body.accessibilityId,body.structureId);
+        await newAccessibility(body.accessibilityId, body.structureId);
         return { created: true }
     }, {
         body: t.Object(
             {
-                structureId: t.Integer(),
                 accessibilityId: t.Integer(),
+                structureId: t.Integer(),
             },
         ),
         detail: {

@@ -8,12 +8,10 @@ export default swagger({
         },
         tags: [
             { name: 'Auth', description: "Authentification endpoints" },
-            { name: 'Check', description: "checks endpoints" },
-            { name: 'Structure', description: "structures endpoints" },
-            { name: 'User', description: "users endpoints" },
+            { name: 'Mobile', description: "Mobile app endpoints" },
             { name: 'Society', description: "society endpoints" },
-            { name: 'Accessibility', description: "Accessibility endpoints" },
-            { name: 'DEV', description: "Developement endpoints" },
+            { name: 'Structure', description: "structures endpoints" },
+            { name: 'Admin', description: "Admin endpoints" },
         ],
         components: {
             securitySchemes: {

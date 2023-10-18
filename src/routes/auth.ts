@@ -10,7 +10,7 @@ export const authController = new Elysia({ prefix: '/auth' })
         secret: process.env.JWT_SECRET!
     }))
     
-    .post('/login/app', async ({ jwt, body }) => {
+    .post('/app/login', async ({ jwt, body }) => {
         const user = await logEmployee(body.email, body.password);
         if (!user)
             return { invalid: true };
@@ -23,11 +23,11 @@ export const authController = new Elysia({ prefix: '/auth' })
         }),
         detail: {
             summary: "Log an employee and send JWT",
-            tags: ['Auth']
+            tags: ['Mobile']
         }
     })
     
-    .post('/login/society', async ({ jwt, body }) => {
+    .post('/society/login', async ({ jwt, body }) => {
         const user = await logSociety(body.email, body.password);
         if (!user)
             return { invalid: true };
@@ -40,11 +40,11 @@ export const authController = new Elysia({ prefix: '/auth' })
         }),
         detail: {
             summary: "Log a society owner and send JWT",
-            tags: ['Auth']
+            tags: ['Society']
         }
     })
     
-    .post('/login/structure', async ({ jwt, body }) => {
+    .post('/structure/login', async ({ jwt, body }) => {
         const user = await logStructure(body.email, body.password);
         if (!user)
             return { invalid: true };
@@ -57,11 +57,11 @@ export const authController = new Elysia({ prefix: '/auth' })
         }),
         detail: {
             summary: "Log a structure user and send JWT",
-            tags: ['Auth']
+            tags: ['Structure']
         }
     })
 
-    .post('/register/employee', async ({ set, body: {email, password, societyId} }) => {
+    .post('/app/register', async ({ set, body: {email, password, societyId} }) => {
         const society = societyId ? await getSocietyById(societyId) : undefined;
         
         if (!society) {
@@ -88,7 +88,7 @@ export const authController = new Elysia({ prefix: '/auth' })
         }
     })
 
-    .post('/register/society', async ({ set, body: {email, password, societyId} }) => {
+    .post('/society/register', async ({ set, body: {email, password, societyId} }) => {
         const society = societyId ? await getSocietyById(societyId) : undefined;
         
         if (!society) {
@@ -115,7 +115,7 @@ export const authController = new Elysia({ prefix: '/auth' })
         }
     })
 
-    .post('/register/structure', async ({ set, body: {email, password, structureId} }) => {
+    .post('/structure/register', async ({ set, body: {email, password, structureId} }) => {
         const structure = structureId ? await getStructureById(structureId) : undefined;
         
         if (!structure) {

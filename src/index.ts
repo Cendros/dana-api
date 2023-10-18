@@ -1,14 +1,12 @@
-import { Elysia, t } from "elysia";
-import { checkController } from "./routes/check";
+import { Elysia } from "elysia";
 import swagger from "./consts/swagger.config";
-import { societyController } from "./routes/society";
-import { structureController } from "./routes/structure";
-import { userController } from "./routes/user";
 import cors from "@elysiajs/cors";
 import staticPlugin from "@elysiajs/static";
 import { authController } from "./routes/auth";
-import jwt from "@elysiajs/jwt";
-import { accessibilityController } from "./routes/accessibility";
+import { accessibilityController } from "./routes/admin/accessibility";
+import { mobileController } from "./routes/mobile";
+import { societyController } from "./routes/society";
+import { structureController } from "./routes/structure";
 
 const app = new Elysia()
     .use(cors())
@@ -23,12 +21,11 @@ const app = new Elysia()
     .use(swagger)
 
     .use(authController)
-    .use(checkController)
+    .use(mobileController)
     .use(societyController)
     .use(structureController)
-    .use(userController)
     .use(accessibilityController)
     
-    .listen(4000)
+    .listen(4000);
 
 export default app;
