@@ -2,7 +2,6 @@ import { Elysia } from "elysia";
 import swagger from "./consts/swagger.config";
 import cors from "@elysiajs/cors";
 import staticPlugin from "@elysiajs/static";
-import { authController } from "./routes/auth";
 import { accessibilityController } from "./routes/admin/accessibility";
 import { mobileController } from "./routes/mobile";
 import { societyController } from "./routes/society";
@@ -20,7 +19,6 @@ const app = new Elysia()
 
     .use(swagger)
 
-    .use(authController)
     .use(mobileController)
     .use(societyController)
     .use(structureController)

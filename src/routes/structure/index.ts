@@ -3,14 +3,17 @@ import jwt from "@elysiajs/jwt";
 import bearer from "@elysiajs/bearer";
 import { UserTypes } from "../../consts/userTypes";
 import { newAccessibility, newStructure } from "../../services/structure";
+import { authController } from "./auth";
 
 
-export const structureController = new Elysia({ prefix: '/app' })
+export const structureController = new Elysia({ prefix: '/structure' })
     .use(jwt({
         name: 'jwt',
         secret: process.env.JWT_SECRET!
     }))
     .use(bearer())
+
+    .use(authController)
 
     .onBeforeHandle(async ({ set, jwt, bearer }) => {
         const tokenData = await jwt.verify(bearer);

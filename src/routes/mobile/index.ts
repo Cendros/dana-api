@@ -3,6 +3,7 @@ import { checkController } from "./check";
 import jwt from "@elysiajs/jwt";
 import bearer from "@elysiajs/bearer";
 import { UserTypes } from "../../consts/userTypes";
+import { authController } from "./auth";
 
 
 export const mobileController = new Elysia({ prefix: '/app' })
@@ -11,6 +12,8 @@ export const mobileController = new Elysia({ prefix: '/app' })
         secret: process.env.JWT_SECRET!
     }))
     .use(bearer())
+
+    .use(authController)
 
     .onBeforeHandle(async ({ set, jwt, bearer }) => {
         const tokenData = await jwt.verify(bearer);
@@ -21,4 +24,4 @@ export const mobileController = new Elysia({ prefix: '/app' })
         }
     })
 
-    .use(checkController);
+    .use(checkController)
