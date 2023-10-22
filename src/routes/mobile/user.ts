@@ -1,17 +1,17 @@
-import Elysia from "elysia";
-import { getCheckFromUser } from "../../services/check";
-import jwt from "@elysiajs/jwt";
 import bearer from "@elysiajs/bearer";
+import jwt from "@elysiajs/jwt";
+import Elysia from "elysia";
+import { getBalance } from "../../services/user";
 import { UserTypes } from "../../consts/userTypes";
 
-export const checkController = new Elysia({ prefix: '/check' })
+export const userController = new Elysia({ prefix: '/user'})
     .use(jwt({
         name: 'jwt',
         secret: process.env.JWT_SECRET!
     }))
     .use(bearer())
 
-    .get('/checks', async ({ set, jwt, bearer }) => {
+    .get('/balance', async ({ set, jwt, bearer }) => {
         const tokenData = await jwt.verify(bearer);
 
         if (!tokenData || tokenData.role !== UserTypes.Employee.toString()) {
@@ -19,11 +19,11 @@ export const checkController = new Elysia({ prefix: '/check' })
             return 'Unauthorized';
         }
 
-        const checks = await getCheckFromUser(Number.parseInt(tokenData.id));
-        return { checks: checks };
+        const balance = await getBalance(Number.parseInt(tokenData.id));
+        return { balance: balance };
     }, {
         detail: {
-            summary: 'get checks of user',
+            summary: 'Get the balance of a user',
             tags: ['Mobile']
         }
     })

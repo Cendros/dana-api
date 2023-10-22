@@ -15,16 +15,14 @@ export const structureController = new Elysia({ prefix: '/structure' })
 
     .use(authController)
 
-    .onBeforeHandle(async ({ set, jwt, bearer }) => {
+    .post('/new', async ({ set, jwt, bearer, body }) => {
         const tokenData = await jwt.verify(bearer);
-        
+
         if (!tokenData || tokenData.role !== UserTypes.Structure.toString()) {
             set.status = 401;
             return 'Unauthorized';
         }
-    })
-
-    .post('/new', async ({ body }) => {
+        
         await newStructure(body.name, body.address, body.city, body.postalCode);
         return { created: true }
     }, {

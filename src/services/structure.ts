@@ -22,7 +22,6 @@ export const newStructure = async (name: string, address: string, city: string, 
             city: city,
             postalCode: postalCode
         })
-        .returning();
 }
 export const newAccessibility = async( accessibilityId: number,structureId:number)=>{
     await db.insert(accessibilityStuctureTable)

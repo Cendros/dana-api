@@ -39,7 +39,7 @@ export const employeeUserTable = sqliteTable("employee_user", {
     email: text('email').notNull().unique(),
     password: text('password').notNull(),
     societyId: integer('society_id').references(() => societyTable.id, { onDelete: 'cascade' }),
-    solde: integer('solde')
+    balance: integer('balance')
 })
 
 export const societyUserTable = sqliteTable("society_user", {
@@ -82,12 +82,12 @@ export const accessibilityTable = sqliteTable("accessibility", {
 export const accessibilityStuctureTable = sqliteTable('accessibility_structure', {
     accessibilityId: integer('accessibility_id').notNull().references(() => accessibilityTable.id, { onDelete: 'cascade' }),
     structureId: integer('structure_id').notNull().references(() => structureTable.id, { onDelete: 'cascade' }),
-   
 }, (table) => {
     return {
         pk: primaryKey(table.accessibilityId, table.structureId)
     }
 })
+
 export type Event = InferSelectModel<typeof eventTable>;
 export type CheckEvent = InferSelectModel<typeof checkSocietyTable>;
 export type CheckUser = InferSelectModel<typeof checkUserTable>;
