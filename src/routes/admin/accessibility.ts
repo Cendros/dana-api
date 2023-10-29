@@ -23,15 +23,15 @@ export const accessibilityController = new Elysia({ prefix: '/accessibility' })
         await newAccessibility(body.name, body.icon, body.type as AccessibilityType)
         return { created: true }
     }, {
-    body: t.Object(
-        {
-            name: t.String(),
-            icon: t.String(),
-            type: t.String()
-        },
-    ),
-    detail: {
-        summary: 'Create a new accessibility',
-        tags: ['Admin']
-    }
-})
+        body: t.Object(
+            {
+                name: t.String(),
+                icon: t.String(),
+                type: t.String()
+            },
+        ),
+        detail: {
+            summary: 'Create a new accessibility',
+            tags: ['Admin']
+        }
+    })

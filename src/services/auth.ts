@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm"
 import { db } from "../db"
-import { employeeUserTable, societyUserTable, structureUserTable } from "../db/schema";
+import { adminUserTable, employeeUserTable, societyUserTable, structureUserTable } from "../db/schema";
 import { UserTypes } from "../consts/userTypes";
 
 export const logEmployee = async (email: string, password: string) => {
@@ -48,6 +48,20 @@ export const logStructure = async (email: string, password: string) => {
     } : false;
 }
 
+export const logAdmin = async (email: string, password: string) => {
+    const user = await db.query.adminUserTable.findFirst({
+        where: eq(adminUserTable.email, email)
+    });
+    if (!user)
+        return false;
+        
+    const valid = await Bun.password.verify(password, user!.password);
+    return valid ? {
+        id: String(user.id),
+        role: UserTypes.Admin.toString()
+    } : false;
+}
+
 export const registerEmployee = async (email: string, password: string, societyId: number) => {
     await db.insert(employeeUserTable).values({
         email: email,
@@ -69,5 +83,12 @@ export const registerStructure = async (email: string, password: string, structu
         email: email,
         password: password,
         structureId: structureId,
+    });
+}
+
+export const registerAdmin = async (email: string, password: string) => {
+    await db.insert(adminUserTable).values({
+        email: email,
+        password: password,
     });
 }

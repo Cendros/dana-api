@@ -1,4 +1,4 @@
-import { InferSelectModel } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { accessibilitiesType } from "../types/accessibility";
 
@@ -56,6 +56,12 @@ export const structureUserTable = sqliteTable("stucture_user", {
     structureId: integer('structure_id').references(() => structureTable.id, { onDelete: 'cascade' }),
 })
 
+export const adminUserTable = sqliteTable("admin_user", {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    email: text('email').notNull().unique(),
+    password: text('password').notNull(),
+})
+
 export const structureTable = sqliteTable("structure", {
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
@@ -89,11 +95,13 @@ export const accessibilityStuctureTable = sqliteTable('accessibility_structure',
 })
 
 export type Event = InferSelectModel<typeof eventTable>;
+export type NewEvent = InferInsertModel<typeof eventTable>;
 export type CheckEvent = InferSelectModel<typeof checkSocietyTable>;
 export type CheckUser = InferSelectModel<typeof checkUserTable>;
 export type EmployeeUser = InferSelectModel<typeof employeeUserTable>;
 export type SocietyUser = InferSelectModel<typeof societyUserTable>;
 export type StructureUser = InferSelectModel<typeof structureUserTable>;
+export type AdminUser = InferSelectModel<typeof adminUserTable>;
 export type Structure = InferSelectModel<typeof structureTable>;
 export type Society = InferSelectModel<typeof societyTable>;
 export type Accessibility = InferSelectModel<typeof accessibilityTable >

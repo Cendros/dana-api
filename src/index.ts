@@ -2,10 +2,10 @@ import { Elysia } from "elysia";
 import swagger from "./consts/swagger.config";
 import cors from "@elysiajs/cors";
 import staticPlugin from "@elysiajs/static";
-import { accessibilityController } from "./routes/admin/accessibility";
 import { mobileController } from "./routes/mobile";
 import { societyController } from "./routes/society";
 import { structureController } from "./routes/structure";
+import { adminController } from "./routes/admin";
 
 const app = new Elysia()
     .use(cors())
@@ -22,7 +22,7 @@ const app = new Elysia()
     .use(mobileController)
     .use(societyController)
     .use(structureController)
-    .use(accessibilityController)
+    .use(adminController)
     
     .listen(4000);
 
