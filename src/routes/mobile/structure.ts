@@ -1,17 +1,17 @@
 import Elysia from "elysia";
-import { getCheckFromUser } from "../../services/check";
 import jwt from "@elysiajs/jwt";
 import bearer from "@elysiajs/bearer";
 import { UserTypes } from "../../consts/userTypes";
+import { getStructuresBySociety } from "../../services/structure";
 
-export const checkController = new Elysia({ prefix: '/check' })
+export const structureController = new Elysia({ prefix: '/structure' })
     .use(jwt({
         name: 'jwt',
         secret: process.env.JWT_SECRET!
     }))
     .use(bearer())
 
-    .get('/checks', async ({ set, jwt, bearer }) => {
+    .get('/my', async ({ set, jwt, bearer }) => {
         const tokenData = await jwt.verify(bearer);
 
         if (!tokenData || tokenData.role !== UserTypes.Employee.toString()) {
@@ -19,11 +19,11 @@ export const checkController = new Elysia({ prefix: '/check' })
             return 'Unauthorized';
         }
 
-        const checks = await getCheckFromUser(Number.parseInt(tokenData.id));
-        return { checks: checks };
+        const structures = await getStructuresBySociety(Number.parseInt(tokenData.societyId));
+        return { structures: [...structures, ...structures, ...structures, ...structures] };
     }, {
         detail: {
-            summary: 'get checks of user',
+            summary: 'get structures available for the user',
             tags: ['Mobile']
         }
     })

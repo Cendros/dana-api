@@ -9,7 +9,7 @@ export const eventTable = sqliteTable('event', {
     value: integer('value').notNull(),
     date: integer('date', { mode: 'timestamp' }),
     dateExpiration: integer('date_expiration', { mode: 'timestamp' }),
-    image: text('name'),
+    image: text('image'),
     description: text('description'),
     quantity: integer('quantity')
 })

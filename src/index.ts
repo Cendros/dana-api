@@ -6,6 +6,7 @@ import { mobileController } from "./routes/mobile";
 import { societyController } from "./routes/society";
 import { structureController } from "./routes/structure";
 import { adminController } from "./routes/admin";
+import { scannerController } from "./routes/scanner";
 
 const app = new Elysia()
     .use(cors())
@@ -23,6 +24,7 @@ const app = new Elysia()
     .use(societyController)
     .use(structureController)
     .use(adminController)
+    .use(scannerController)
     
     .listen(4000);
 

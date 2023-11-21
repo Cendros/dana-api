@@ -8,7 +8,9 @@ export const getUsers = async () => {
 }
 
 export const getUserById = async (id: number) => {
-    const user = await db.select().from(employeeUserTable).where(eq(employeeUserTable.id, id));
+    const user = await db.query.employeeUserTable.findFirst({
+        where: eq(employeeUserTable.id, id)
+    });
     return user;
 }
 

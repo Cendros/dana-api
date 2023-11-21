@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
 import { db } from "../db"
 import { NewEvent, checkSocietyTable, eventTable, societyTable } from "../db/schema"
 
@@ -39,4 +39,24 @@ export const assignToSociety = async (eventId: number, societyId: number, quanti
         .where(eq(eventTable.id, eventId));
     
     return { assigned: true };
+}
+
+export const getEventsBySociety = async (societyId: number) => {
+    let events = await db.select({ event: eventTable, quantity:checkSocietyTable.quantity })
+        .from(checkSocietyTable)
+        .leftJoin(eventTable, eq(eventTable.id, checkSocietyTable.eventId))
+        .where(
+            and(
+                eq(checkSocietyTable.societyId, societyId),
+                gt(checkSocietyTable.quantity, 0)
+            )
+        )
+        .limit(10);
+    
+    events = events.reduce((accu: Array<any>, event) => {
+        accu.push({...event.event, quantity: event.quantity});
+        return accu;
+    }, [])
+    
+    return events;
 }

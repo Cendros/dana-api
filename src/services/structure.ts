@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
 import { db } from "../db"
-import { accessibilityStuctureTable, structureTable } from "../db/schema"
+import { accessibilityStuctureTable, checkSocietyTable, eventTable, structureTable } from "../db/schema"
 
 export const getStructures = async () => {
     const structures = await db.select().from(structureTable).all();
@@ -29,4 +29,19 @@ export const newAccessibility = async( accessibilityId: number,structureId:numbe
             structureId: structureId,
             accessibilityId : accessibilityId
         })
+}
+
+export const getStructuresBySociety = async (societyId: number) => {
+    let events = await db.select({ structure: structureTable })
+        .from(checkSocietyTable)
+        .leftJoin(eventTable, eq(eventTable.id, checkSocietyTable.eventId))
+        .leftJoin(structureTable, eq(structureTable.id, eventTable.structureId))
+        .where(
+            and(
+                eq(checkSocietyTable.societyId, societyId),
+                gt(checkSocietyTable.quantity, 0)
+            )
+        )
+    
+    return events;
 }
