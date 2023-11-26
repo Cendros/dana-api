@@ -1,6 +1,7 @@
-import { and, eq, gt } from "drizzle-orm";
-import { db } from "../db"
-import { NewEvent, checkSocietyTable, eventTable, societyTable } from "../db/schema"
+import { and, eq, gt, sql } from "drizzle-orm";
+import { db } from "../db";
+import { NewEvent, checkSocietyTable, checkUserTable, employeeUserTable, eventTable, societyTable, structureTable } from "../db/schema";
+import CRC32 from 'crc-32';
 
 export const newEvent = async (event: NewEvent) => {
     const created = await db.insert(eventTable).values(event);
@@ -41,22 +42,166 @@ export const assignToSociety = async (eventId: number, societyId: number, quanti
     return { assigned: true };
 }
 
-export const getEventsBySociety = async (societyId: number) => {
-    let events = await db.select({ event: eventTable, quantity:checkSocietyTable.quantity })
+export const getEventsBySociety = async (userId: number, societyId: number) => {
+    let events = await db.select({
+            event: eventTable,
+            quantity:checkSocietyTable.quantity,
+            ticketId: checkUserTable.id
+        })
         .from(checkSocietyTable)
         .leftJoin(eventTable, eq(eventTable.id, checkSocietyTable.eventId))
+        .leftJoin(checkUserTable, eq(checkUserTable.userId, userId))
         .where(
             and(
                 eq(checkSocietyTable.societyId, societyId),
-                gt(checkSocietyTable.quantity, 0)
+                gt(checkSocietyTable.quantity, 0),
+                gt(eventTable.date, new Date()),
             )
         )
+        .orderBy(eventTable.date)
         .limit(10);
     
     events = events.reduce((accu: Array<any>, event) => {
-        accu.push({...event.event, quantity: event.quantity});
+        accu.push({
+            ...event.event,
+            quantity: event.quantity,
+            ticketId: event.ticketId
+        });
         return accu;
-    }, [])
+    }, []);
     
     return events;
+}
+
+export const getEventValue = async (id: number) => {
+    const event = await db.query.eventTable.findFirst({
+        columns: {
+            value: true
+        },
+        where: eq(eventTable.id, id)
+    });
+
+    return event?.value;
+}
+
+export const getEventSociety = async (id: number, societyId: number) => {
+    const eventSociety = await db.query.checkSocietyTable.findFirst({
+        where: (event, { eq, and }) => (
+            and(
+                eq(event.eventId, id),
+                eq(event.societyId, societyId)
+            )
+        )
+    });
+
+    return eventSociety;
+}
+
+export const getEventsByUser = async (userId: number) => {
+    let events = await db.select({
+        ticketId: checkUserTable.id,
+        event: eventTable,
+        structureId: structureTable.id,
+        structureName: structureTable.name
+    })
+        .from(checkUserTable)
+        .leftJoin(eventTable, eq(eventTable.id, checkUserTable.eventId))
+        .leftJoin(structureTable, eq(structureTable.id, eventTable.structureId))
+        .where(eq(checkUserTable.userId, userId));
+    
+    events = events.reduce((accu: Array<any>, event) => {
+        accu.push({
+            ...event.event,
+            ticketId: event.ticketId,
+            structureId: event.structureId,
+            structureName: event.structureName
+        });
+        return accu;
+    }, []);
+
+    return events;
+}
+
+export const bookEvent = async (userId: number, eventId: number) => {
+    const user = await db.query.employeeUserTable.findFirst({
+        columns: {
+            balance: true,
+            societyId: true
+        },
+        where: eq(employeeUserTable.id, userId)
+    })
+
+    if (!user)
+        return { error: "Il y a eu une erreur lors de la réservation." };
+    
+    const value = await getEventValue(eventId);
+
+    if (!value)
+        return { error: "Il y a eu une erreur lors de la réservation."};
+
+    if (!user.balance || user.balance < value || !user.societyId)
+        return { error: "Vous ne pouvez pas réserver cet évènement."};
+
+    const eventSociety = await getEventSociety(eventId, user.societyId);
+
+    if (!eventSociety || (eventSociety.quantity ?? 0) <= 0)
+        return { error: "Vous ne pouvez pas réserver cet évènement."};
+
+    const res = await db.transaction(async tx => {
+        let query = await tx.update(checkSocietyTable)
+            .set({ quantity: sql`${checkSocietyTable.quantity} - 1` })
+            .where(
+                and(
+                    eq(checkSocietyTable.eventId, eventSociety.eventId),
+                    eq(checkSocietyTable.societyId, eventSociety.societyId)
+                )
+            );
+
+        if (!query.rowsAffected) {
+            tx.rollback();
+            return false
+        }
+
+        query = await tx.update(employeeUserTable)
+            .set({
+                balance: user.balance! - value
+            })
+            .where(eq(employeeUserTable.id, userId));
+
+        if (!query.rowsAffected) {
+            tx.rollback();
+            return false;
+        }
+
+        query = await tx.insert(checkUserTable).values({
+            eventId: eventId,
+            userId: userId
+        });
+
+        if (!query.rowsAffected) {
+            tx.rollback();
+            return false;
+        }
+
+        const events = await db.select({
+            ticketId: checkUserTable.id,
+            event: eventTable,
+            structure: structureTable
+        })
+            .from(checkUserTable)
+            .leftJoin(eventTable, eq(eventTable.id, checkUserTable.eventId))
+            .leftJoin(structureTable, eq(structureTable.id, eventTable.structureId))
+            .where(
+                and(
+                    eq(checkUserTable.userId, userId),
+                    eq(checkUserTable.eventId, eventId)
+                )
+            );
+        
+        return { ticket: events[0] };
+    });
+
+    console.log(res);
+    
+    return res;
 }

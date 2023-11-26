@@ -25,13 +25,9 @@ export const checkSocietyTable = sqliteTable('check_society', {
 })
 
 export const checkUserTable = sqliteTable('check_user', {
+    id: integer('id').primaryKey({ autoIncrement: true }),
     eventId: integer('event_id').notNull().references(() => eventTable.id, { onDelete: 'cascade' }),
     userId: integer('user_id').notNull().references(() => employeeUserTable.id, { onDelete: 'cascade' }),
-    quantity: integer('quantity').notNull(),
-}, (table) => {
-    return {
-        pk: primaryKey(table.eventId, table.userId)
-    }
 })
 
 export const employeeUserTable = sqliteTable("employee_user", {
