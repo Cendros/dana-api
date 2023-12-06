@@ -16,10 +16,10 @@ export const getSocietyById = async (id: number) => {
 
 export const newSociety = async (name: string, address:string,city:string, postalCode:string) => {
     await db.insert(societyTable).values({
-        name: name,
-        city: city,
-        postalCode: postalCode,
-        address: address,
+        name,
+        city,
+        postalCode,
+        address,
     });
 }
 

@@ -8,26 +8,28 @@ export const getStructures = async () => {
 }
 
 export const getStructureById = async (id: number) => {
-    const society = await db.query.structureTable.findFirst({
+    const structure = await db.query.structureTable.findFirst({
         where: eq(structureTable.id, id)
     })
-    return society;
+    return structure;
 }
 
-export const newStructure = async (name: string, address: string, city: string, postalCode: string) => {
+export const newStructure = async (name: string, address: string, city: string, postalCode: string, latitude: string, longitude: string) => {
     await db.insert(structureTable)
         .values({
-            name: name,
-            address: address,
-            city: city,
-            postalCode: postalCode
+            name,
+            address,
+            city,
+            postalCode,
+            latitude,
+            longitude
         })
 }
-export const newAccessibility = async( accessibilityId: number,structureId:number)=>{
+export const newAccessibility = async(accessibilityId: number, structureId:number)=>{
     await db.insert(accessibilityStuctureTable)
         .values({
-            structureId: structureId,
-            accessibilityId : accessibilityId
+            structureId,
+            accessibilityId
         })
 }
 

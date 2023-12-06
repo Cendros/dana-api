@@ -64,7 +64,9 @@ export const structureTable = sqliteTable("structure", {
     address: text('address'),
     city: text('city'),
     postalCode: text('postalCode'),
-    image: text('image')
+    image: text('image'),
+    longitude: text('longitude'),
+    latitude: text('latitude')
 })
 
 export const societyTable = sqliteTable("society", {
