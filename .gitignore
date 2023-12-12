@@ -42,4 +42,4 @@ package-lock.json
 **/*.bun
 
 .env
-/public/images/structures
+/public/images/*

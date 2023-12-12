@@ -34,7 +34,7 @@ export const newAccessibility = async(accessibilityId: number, structureId:numbe
 }
 
 export const getStructuresBySociety = async (societyId: number) => {
-    let events = await db.select({ structure: structureTable })
+    let structures = await db.selectDistinct({ structure: structureTable })
         .from(checkSocietyTable)
         .leftJoin(eventTable, eq(eventTable.id, checkSocietyTable.eventId))
         .leftJoin(structureTable, eq(structureTable.id, eventTable.structureId))
@@ -45,5 +45,7 @@ export const getStructuresBySociety = async (societyId: number) => {
             )
         )
     
-    return events;
+    const res = structures.map(structure => structure.structure);
+    
+    return res;
 }

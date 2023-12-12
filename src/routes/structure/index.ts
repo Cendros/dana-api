@@ -23,7 +23,7 @@ export const structureController = new Elysia({ prefix: '/structure' })
             return 'Unauthorized';
         }
         
-        await newStructure(body.name, body.address, body.city, body.postalCode);
+        await newStructure(body.name, body.address, body.city, body.postalCode, body.latitude, body.longitude);
         return { created: true }
     }, {
         body: t.Object(
@@ -31,7 +31,9 @@ export const structureController = new Elysia({ prefix: '/structure' })
                 name: t.String(),
                 address: t.String(),
                 city: t.String(),
-                postalCode: t.String()
+                postalCode: t.String(),
+                latitude: t.String(),
+                longitude: t.String()
             },
         ),
         detail: {

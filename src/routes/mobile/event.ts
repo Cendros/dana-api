@@ -20,7 +20,7 @@ export const eventController = new Elysia({ prefix: '/event' })
         }
 
         const events = await getEventsBySociety(Number.parseInt(tokenData.id), Number.parseInt(tokenData.societyId));
-        return { events: [...events, ...events, ...events, ...events] };
+        return { events };
     }, {
         detail: {
             summary: 'get events available for the user',
@@ -59,7 +59,7 @@ export const eventController = new Elysia({ prefix: '/event' })
 
         const events = await getEventsByUser(Number.parseInt(tokenData.id));
 
-        return [...events, ...events, ...events, ...events];
+        return events;
     }, {
         detail: {
             summary: 'get events available for the user',

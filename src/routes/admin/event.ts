@@ -22,7 +22,7 @@ export const eventController = new Elysia({ prefix: '/event' })
 
         const created = await newEvent({
             ...body,
-            date: new Date(body.date),
+            date: body.date ? new Date(body.date) : null,
             dateExpiration: body.dateExpiration ? new Date(body.dateExpiration) : null
         } as NewEvent);
 
@@ -33,7 +33,7 @@ export const eventController = new Elysia({ prefix: '/event' })
                 structureId: t.Integer(),
                 name: t.String(),
                 value: t.Integer(),
-                date: t.String({ format: "date-time" }),
+                date: t.Optional(t.String({format: "date-time" })),
                 dateExpiration: t.Optional(t.String({format: "date-time" })),
                 image: t.String(),
                 description: t.String(),

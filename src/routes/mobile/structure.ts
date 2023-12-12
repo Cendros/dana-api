@@ -20,7 +20,7 @@ export const structureController = new Elysia({ prefix: '/structure' })
         }
 
         const structures = await getStructuresBySociety(Number.parseInt(tokenData.societyId));
-        return { structures: [...structures, ...structures, ...structures, ...structures] };
+        return { structures };
     }, {
         detail: {
             summary: 'get structures available for the user',

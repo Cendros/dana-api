@@ -46,11 +46,13 @@ export const getEventsBySociety = async (userId: number, societyId: number) => {
     let events = await db.select({
             event: eventTable,
             quantity:checkSocietyTable.quantity,
-            ticketId: checkUserTable.id
+            ticketId: checkUserTable.id,
+            structure: structureTable.name
         })
         .from(checkSocietyTable)
         .leftJoin(eventTable, eq(eventTable.id, checkSocietyTable.eventId))
-        .leftJoin(checkUserTable, eq(checkUserTable.userId, userId))
+        .leftJoin(checkUserTable, and(eq(checkUserTable.userId, userId), sql`event.id = ${checkUserTable.eventId}`))
+        .leftJoin(structureTable, eq(structureTable.id, eventTable.structureId))
         .where(
             and(
                 eq(checkSocietyTable.societyId, societyId),
@@ -65,7 +67,8 @@ export const getEventsBySociety = async (userId: number, societyId: number) => {
         accu.push({
             ...event.event,
             quantity: event.quantity,
-            ticketId: event.ticketId
+            ticketId: event.ticketId,
+            structureName: event.structure
         });
         return accu;
     }, []);
