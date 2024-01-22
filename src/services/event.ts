@@ -150,7 +150,7 @@ export const bookEvent = async (userId: number, eventId: number) => {
     if (!eventSociety || (eventSociety.quantity ?? 0) <= 0)
         return { error: "Vous ne pouvez pas réserver cet évènement."};
 
-    const res = await db.transaction(async tx => {
+    await db.transaction(async tx => {
         let query = await tx.update(checkSocietyTable)
             .set({ quantity: sql`${checkSocietyTable.quantity} - 1` })
             .where(
@@ -185,8 +185,9 @@ export const bookEvent = async (userId: number, eventId: number) => {
             tx.rollback();
             return false;
         }
+    });
 
-        const events = await db.select({
+    const events = await db.select({
             ticketId: checkUserTable.id,
             event: eventTable,
             structure: structureTable
@@ -200,11 +201,10 @@ export const bookEvent = async (userId: number, eventId: number) => {
                     eq(checkUserTable.eventId, eventId)
                 )
             );
-        
-        return { ticket: events[0] };
-    });
 
-    console.log(res);
-    
-    return res;
+    return { ticket: {
+        ...events[0].event,
+        ticketId: events[0].ticketId,
+        structureName: events[0].structure?.name
+    } };
 }

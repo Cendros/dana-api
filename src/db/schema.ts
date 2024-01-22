@@ -35,7 +35,9 @@ export const employeeUserTable = sqliteTable("employee_user", {
     email: text('email').notNull().unique(),
     password: text('password').notNull(),
     societyId: integer('society_id').references(() => societyTable.id, { onDelete: 'cascade' }),
-    balance: integer('balance')
+    balance: integer('balance'),
+    firstname: text('firstname'),
+    lastname: text('lastname')
 })
 
 export const societyUserTable = sqliteTable("society_user", {

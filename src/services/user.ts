@@ -43,3 +43,26 @@ export const getBalance = async (id: number) => {
     })
     return user?.balance;
 }
+
+export const getProfile = async (id: number) => {
+    const profile = await db.query.employeeUserTable.findFirst({
+        columns: {
+            firstname: true,
+            lastname: true,
+            email: true
+        },
+        where: eq(employeeUserTable.id, id)
+    })
+    return profile;
+}
+
+export const modifyInfos = async (userId: number, firstname: string | null | undefined, lastname: string | null | undefined, password: string | null | undefined) => {
+    const edit = await db.update(employeeUserTable)
+        .set({
+            ...firstname && { firstname },
+            ...lastname && { lastname },
+            ...password && { password },
+        })
+        .where(eq(employeeUserTable.id, userId));
+    return !!edit.rowsAffected;
+}

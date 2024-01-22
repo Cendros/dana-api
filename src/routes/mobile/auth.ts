@@ -2,12 +2,19 @@ import Elysia, { t } from "elysia";
 import jwt from "@elysiajs/jwt";
 import { getSocietyById } from "../../services/society";
 import { logEmployee, registerEmployee } from "../../services/auth";
+import cors from "@elysiajs/cors";
 
 export const authController = new Elysia()
+    .use(cors())
+    
     .use(jwt({
         name: 'jwt',
         secret: process.env.JWT_SECRET!
     }))
+
+    .get('/test', async () => {
+        return { test: true };
+    })
     
     .post('/login', async ({ jwt, body }) => {
         const user = await logEmployee(body.email, body.password);

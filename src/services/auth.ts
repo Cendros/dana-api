@@ -92,3 +92,15 @@ export const registerAdmin = async (email: string, password: string) => {
         password: password,
     });
 }
+
+export const isPasswordCorrect = async (password: string, userId: number) => {
+    const user = await db.query.employeeUserTable.findFirst({
+        columns: { password: true },
+        where: eq(employeeUserTable.id, userId)
+    });
+    if (!user)
+        return false;
+        
+    const valid = await Bun.password.verify(password, user!.password);
+    return valid;
+}
