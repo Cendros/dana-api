@@ -26,6 +26,6 @@ const app = new Elysia()
     .use(adminController)
     .use(scannerController)
 
-    .listen(4000);
+    .listen(3000);
 
 export default app;
